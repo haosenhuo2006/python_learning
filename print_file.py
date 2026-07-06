@@ -1,9 +1,32 @@
-# 打印文件内容
+"""列出当前目录中每个 Jupyter Notebook 的章节与单元统计。"""
 
-with open(r'd:\python_learning\numpy_studying.ipynb', 'r', encoding='utf-8') as f:
-    content = f.read()
+import json
+from pathlib import Path
 
-# 打印前2000个字符
-print('文件前2000个字符:')
-print('=' * 50)
-print(content[:2000])
+
+def headings(cell: dict) -> list[str]:
+    """返回 Markdown 单元中的全部标题行。"""
+    source = "".join(cell.get("source", []))
+    return [
+        line.strip()
+        for line in source.splitlines()
+        if line.lstrip().startswith("#")
+    ]
+
+
+def main() -> None:
+    root = Path(__file__).resolve().parent
+    for path in sorted(root.glob("*.ipynb")):
+        notebook = json.loads(path.read_text(encoding="utf-8"))
+        cells = notebook.get("cells", [])
+        markdown = sum(c.get("cell_type") == "markdown" for c in cells)
+        code = sum(c.get("cell_type") == "code" for c in cells)
+        print(f"\n{path.name}: {markdown} markdown, {code} code")
+        for cell in cells:
+            if cell.get("cell_type") == "markdown":
+                for heading in headings(cell):
+                    print(" ", heading)
+
+
+if __name__ == "__main__":
+    main()
