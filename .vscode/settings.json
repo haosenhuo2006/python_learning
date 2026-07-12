@@ -1,0 +1,7 @@
+{
+  "python.defaultInterpreterPath": "/opt/anaconda3/envs/d2l/bin/python",
+  "jupyter.notebookFileRoot": "${workspaceFolder}",
+  "python.analysis.extraPaths": [
+    "/opt/anaconda3/envs/d2l/lib/python3.11/site-packages"
+  ]
+}
